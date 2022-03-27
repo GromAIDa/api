@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 module.exports = {
-  address: '0x5923B28c59c027b3Cd6a8E51e794BF8004d2ecc3',
-  contract_address: '0x08dEAad576175d71A953A0364A4262b087f22978',
+  address: process.env.ADDRESS,
+  contract_address: process.env.CONTRACT_ADDRESS,
   ERC20_ABi: [
     {
       inputs: [],
