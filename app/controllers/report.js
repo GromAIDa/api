@@ -38,9 +38,7 @@ exports.addReport = (req, res) => {
           photo: el.path,
         })),
         description: req.body.description,
-        price: req.body.price,
-        count: req.body.count,
-        productType: req.body.productType,
+        products: JSON.parse(req.body.products),
         createdAt: Date.now(),
       }).then((data) => {
         if (data) {

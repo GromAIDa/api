@@ -1,7 +1,6 @@
 const { ethers } = require('ethers');
 const Transition = require('../schemas/Transition');
 const abi = require('../../abi/erc20abi');
-require('dotenv').config();
 
 exports.contractEventEmitter = async () => {
   const provider = await new ethers.providers.EtherscanProvider(
@@ -23,6 +22,7 @@ exports.contractEventEmitter = async () => {
       to,
       value: ethers.utils.formatEther(value),
       data: event,
+      createdAt: Date.now(),
     };
     Transition.find(
       { 'data.transactionHash': transition.data.transactionHash },

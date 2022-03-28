@@ -19,6 +19,7 @@ const schema = mongoose.Schema({
     event: String,
     eventSignature: String,
   },
+  createdAt: Date,
 });
 schema.plugin(mongoosePaginate);
 

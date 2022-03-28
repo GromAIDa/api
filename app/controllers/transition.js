@@ -17,3 +17,27 @@ exports.getTransitions = (req, res) => {
     });
   }
 };
+
+exports.getTotalInfo = (req, res) => {
+  Transition.find({ to: process.env.ADDRESS }).then((data) => {
+    const total = {
+      donators: 0,
+      start: data[0].createdAt,
+      donated: 0,
+    };
+    const separateAddresses = [];
+    data.forEach((transition) => {
+      if (
+        !separateAddresses.includes(transition.from) &&
+        transition.from !== process.env.ADDRESS
+      ) {
+        separateAddresses.push(transition.from);
+      }
+      if (transition.from !== process.env.ADDRESS) {
+        total.donated += Number(transition.value);
+      }
+    });
+    total.donators = separateAddresses.length;
+    res.status(200).send(total);
+  });
+};

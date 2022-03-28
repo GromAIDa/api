@@ -8,8 +8,13 @@ const schema = mongoose.Schema({
     },
   ],
   description: String,
-  count: Number,
-  productType: String,
+  products: [
+    {
+      count: Number,
+      productType: String,
+      price: Number,
+    },
+  ],
   price: Number,
   createdAt: Date,
 });

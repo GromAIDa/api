@@ -14,5 +14,17 @@ exports.price = () =>
 exports.count = () =>
   body('count').optional().isNumeric().withMessage('Must be number');
 
-exports.productType = () =>
-  body('productType').not().isEmpty().withMessage('Must be filled');
+exports.products = () =>
+  body('products').custom((value) => {
+    const products = JSON.parse(value);
+    if (!products[0].count) {
+      return Promise.reject('Count is undefined');
+    }
+    if (!products[0].productType) {
+      return Promise.reject('ProductType is undefined');
+    }
+    if (!products[0].price) {
+      return Promise.reject('Price is undefined');
+    }
+    return Promise.resolve();
+  });

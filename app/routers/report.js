@@ -1,6 +1,5 @@
 const reportController = require('../controllers/report');
 const upload = require('../services/multer.service');
-require('dotenv').config();
 const reportValidators = require('../middleware/validators/report');
 const validators = require('../middleware/validators/validators');
 
@@ -12,7 +11,7 @@ module.exports = function (app) {
     reportValidators.description(),
     reportValidators.price(),
     reportValidators.count(),
-    reportValidators.productType(),
+    reportValidators.products(),
     (req, res) => {
       reportController.addReport(req, res);
     }
