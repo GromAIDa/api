@@ -40,6 +40,7 @@ exports.addReport = (req, res) => {
         description: req.body.description,
         products: JSON.parse(req.body.products),
         createdAt: Date.now(),
+        price: req.body.price,
       }).then((data) => {
         if (data) {
           res.status(200).send({ data });
