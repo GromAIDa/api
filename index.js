@@ -6,9 +6,10 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const contractService = require('./app/services/contract.service');
 require('dotenv').config();
-require('./app/routers/routers')(app);
 
 app.use(cors());
+require('./app/routers/routers')(app);
+
 
 mongoose
   .connect(process.env.MONGO_URL, { useNewUrlParser: true })
