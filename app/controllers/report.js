@@ -35,7 +35,7 @@ exports.addReport = (req, res) => {
     } else {
       Report.create({
         photos: req.files.map((el) => ({
-          photo: el.path,
+          photo: el.filename,
         })),
         description: req.body.description,
         products: JSON.parse(req.body.products),
