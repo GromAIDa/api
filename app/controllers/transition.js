@@ -38,6 +38,8 @@ exports.getTotalInfo = (req, res) => {
       }
     });
     total.donators = separateAddresses.length;
-    res.status(200).send(total);
+    res.status(200).send({
+      data: total,
+    });
   });
 };
