@@ -33,19 +33,32 @@ exports.addReport = (req, res) => {
         ],
       });
     } else {
+      const products = JSON.parse(req.body.products);
       Report.create({
         photos: req.files.map((el) => ({
           photo: el.filename,
         })),
         description: req.body.description,
-        products: JSON.parse(req.body.products),
-        createdAt: Date.now(),
+        products,
         price: req.body.price,
-      }).then((data) => {
-        if (data) {
-          res.status(200).send({ data });
-        }
-      });
+      })
+        .then((data) => {
+          if (data) {
+            res.status(200).send({ data });
+          }
+        })
+        .catch((err) => {
+          req.files
+            .map((el) => ({
+              photo: el.path,
+            }))
+            .forEach((element) => {
+              const path = element.photo;
+              fs.unlink(path, () => {
+                res.status(401).json(err);
+              });
+            });
+        });
     }
   } else {
     req.files

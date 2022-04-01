@@ -1,0 +1,69 @@
+type,productName,size,packing,count
+MEDICAL GOODS,Antiallergic drugs,,Pack,1000
+,Amino acids,,Pack,1000
+,Antibacterial drugs,,Pack,3000
+,Antibiotics,,Pcs,3000
+,Drugs for the treatment of arthritis,,Pcs,700
+,Vitamin complexes,,Pcs,1000
+,Hepatoprotectors,,Pcs,1000
+,Omnitrop (Growth Hormone),,Pack,1600
+,Triplex (Growth Hormone),,Pack,700
+,Analgesics,,Pcs,1400
+,Hemostatic drugs,,Pcs,1000
+,Antipyretic drugs,,Packs,500
+,Antiseptic drugs,,,1000
+,Surgical instruments,,Pcs,20000
+,Insulins,,Pcs,100000
+,Aktrapid NM penf,,,7000
+,Actropid NM vial,,,10000
+,Epider penf,,,3000
+,Lantus Penf,,,5000
+,Levemir Penf,,,3000
+,Mixstard 30-70 pence,,,10000
+,Mixstard NM vial,,,20000
+,Novomix penf,,,1000
+,Novorapid,,,6000
+,Profatan NM penf,,,16000
+,Profatan NM vial,,,25000
+,Tooo penf,,,1600
+,Tresiba penf,,,1600
+,Tactical first aid kit,,Pcs,10000
+,Atechka Individual,,Pcs,1500
+,Turnstile harnesses,,Pcs,2000
+,Dressing materials,,Pcs,10000
+,,,,
+CLOTHES AND SHOES,Underwear,,Pair,1000
+,Transport bags,,Pcs,3000
+,Thermal underwear,,Pcs,6000
+,Socks,39-48 size,Pair,1500
+,,,,
+HYGIENE GOODS,Wet wipes,,Boxes,50
+,Shower Gel,,Liters,100
+,Disposable tableware,,complex,300
+,Baby diapers,,90*60,3000
+,Baby diapers,,Pcs,1200
+,Adult diapers,,Pcs,1500
+,Toilet paper,,Block,500
+,Gaskets,,Packs,100
+,Paper towels,,Pcs,150
+,Toothpaste,,Pcs,600
+,Toothbrushes,,Pcs,600
+,Soap,,Pcs,300
+,Detergent,,Kg,400
+,Laundry soap,,Pcs,100
+FOOD PRODUCTS,,,,
+,Baby food,,Backs,4000
+,Canned food,,Pc,1000
+,Cereals,,Kg,600
+,Pasta,,Kg,600
+,Milk,,Liters,100
+,Flour,,Kg,200
+,Vegetables,,Kg,500
+,Oil,,Liters,300
+,Cookies,,Packs,300
+,Salt,,Kg,100
+,Dry rations,,Pcs,22000
+,Fruits,,Kg,500
+,Cigarettes,,Kg,10
+,Sugar,,Kg,300
+,Tea,,Packs,38

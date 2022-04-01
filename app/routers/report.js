@@ -1,5 +1,5 @@
 const reportController = require('../controllers/report');
-const upload = require('../services/multer.service');
+const upload = require('../services/multers/multer-photo.service');
 const reportValidators = require('../middleware/validators/report');
 const validators = require('../middleware/validators/validators');
 
