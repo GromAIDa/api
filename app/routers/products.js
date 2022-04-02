@@ -1,24 +1,25 @@
+const { body } = require('express-validator');
+const commonValidators = require('../middleware/validators/common-validators');
 const validators = require('../middleware/validators/validators');
-const productValidator = require('../middleware/validators/product');
 const productsController = require('../controllers/product');
 const upload = require('../services/multers/multer-csv.service');
+const transformerProduct = require('../middleware/transformer/products');
 
 module.exports = function (app, jsonParser) {
-  app.get('/products', validators.limit(), (req, res) => {
+  app.get('/products', validators.productValidatorsGet, (req, res) => {
     productsController.getProducts(req, res);
+  });
+
+  app.get('/products/type', (req, res) => {
+    productsController.getProductsTypes(req, res);
   });
 
   app.post(
     '/product',
     jsonParser,
-    validators.authorization(),
-    validators.limit(),
-    productValidator.isBought(),
-    productValidator.size(),
-    productValidator.type(),
-    productValidator.packing(),
-    productValidator.productName(),
-    productValidator.count(),
+    validators.productValidatorsPost,
+    transformerProduct.toLowerCase,
+    body('productName').custom((value) => value.toUpperCase()),
     (req, res) => {
       productsController.postProducts(req, res);
     }
@@ -27,7 +28,7 @@ module.exports = function (app, jsonParser) {
   app.post(
     '/products/file',
     upload.single('file'),
-    validators.authorization(),
+    commonValidators.authorization(),
     (req, res) => {
       productsController.postProductsByFile(req, res);
     }

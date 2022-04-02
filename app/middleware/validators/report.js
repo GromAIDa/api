@@ -1,5 +1,6 @@
 /* eslint-disable prefer-promise-reject-errors */
 const { body } = require('express-validator');
+const errorMsg = require('../../data/error-message');
 
 exports.description = () => body('description').optional();
 
@@ -18,16 +19,16 @@ exports.products = () =>
   body('products').custom((value) => {
     const products = JSON.parse(value);
     if (!products[0].count) {
-      return Promise.reject('count is undefined');
+      return Promise.reject(errorMsg.IsUndefined('count'));
     }
     if (!products[0].productType) {
-      return Promise.reject('productType is undefined');
+      return Promise.reject(errorMsg.IsUndefined('productType'));
     }
     if (!products[0].productName) {
-      return Promise.reject('productName is undefined');
+      return Promise.reject(errorMsg.IsUndefined('productName'));
     }
     if (!products[0].price) {
-      return Promise.reject('price is undefined');
+      return Promise.reject(errorMsg.IsUndefined('price'));
     }
     return Promise.resolve();
   });

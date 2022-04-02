@@ -1,7 +1,24 @@
-const { body } = require('express-validator');
+/* eslint-disable prefer-promise-reject-errors */
+const { body, query } = require('express-validator');
+const Product = require('../../schemas/Product');
+const errorMsg = require('../../data/error-message');
 
 exports.isBought = () =>
   body('isBought').optional().isBoolean().withMessage('Must be boolean');
+
+exports.queryType = () =>
+  query('type')
+    .optional()
+    .custom((value) =>
+      Product.find({ type: value }, 'type').then((data) => {
+        if (!data.length) {
+          return Promise.reject(errorMsg.IsNotFound('type'));
+        }
+        return Promise.resolve('');
+      })
+    );
+
+exports.query = () => query('query').optional();
 
 exports.size = () => body('size').optional();
 

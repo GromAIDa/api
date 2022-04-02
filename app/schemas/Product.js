@@ -8,6 +8,7 @@ const schema = mongoose.Schema(
     count: Number,
     packing: String,
     size: String,
+    photo: String,
     isBought: { default: false, type: Boolean },
   },
   {

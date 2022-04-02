@@ -1,16 +1,28 @@
-/* eslint-disable prefer-promise-reject-errors */
-const { header, query } = require('express-validator');
+const productValidator = require('./product');
+const reportValidators = require('./report');
+const commonValidators = require('./common-validators');
 
-exports.authorization = () =>
-  header('Authorization').custom((value) => {
-    if (value === process.env.AUTHORIZATION) {
-      return Promise.resolve('Authorization');
-    }
-    return Promise.reject('Unauthorization');
-  });
+exports.productValidatorsPost = [
+  commonValidators.authorization(),
+  commonValidators.limit(),
+  productValidator.isBought(),
+  productValidator.size(),
+  productValidator.type(),
+  productValidator.packing(),
+  productValidator.productName(),
+  productValidator.count(),
+];
 
-exports.limit = () =>
-  query('limit')
-    .optional()
-    .isIn([5, 10, 20])
-    .withMessage('Must be 5, 10 or 20');
+exports.productValidatorsGet = [
+  commonValidators.limit(),
+  productValidator.query(),
+  productValidator.queryType(),
+];
+
+exports.reportValidatorsPost = [
+  commonValidators.authorization(),
+  reportValidators.description(),
+  reportValidators.price(),
+  reportValidators.count(),
+  reportValidators.products(),
+];
