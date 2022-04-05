@@ -1,5 +1,6 @@
 const Transition = require('../schemas/Transition');
 const errors = require('../middleware/errors/errors');
+const StatusCodes = require('../data/status-codes');
 
 exports.getTransitions = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -13,7 +14,7 @@ exports.getTransitions = (req, res) => {
       },
     };
     Transition.paginate({}, options, (err, data) => {
-      res.status(200).send({ data });
+      res.status(StatusCodes.OK).send({ data });
     });
   }
 };
@@ -38,7 +39,7 @@ exports.getTotalInfo = (req, res) => {
       }
     });
     total.donators = separateAddresses.length;
-    res.status(200).send({
+    res.status(StatusCodes.OK).send({
       data: total,
     });
   });

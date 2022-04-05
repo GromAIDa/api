@@ -1,11 +1,32 @@
 const fs = require('fs');
 const Report = require('../schemas/Report');
 const errors = require('../middleware/errors/errors');
+const StatusCodes = require('../data/status-codes');
 
 exports.getReports = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
+    const time = req.query.time || '';
+    let filterByDate = {};
+    switch (time) {
+      case 'week':
+        filterByDate = {
+          createdAt: {
+            $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
+          },
+        };
+        break;
+      case 'mounth':
+        filterByDate = {
+          createdAt: {
+            $gte: new Date(new Date() - 30 * 60 * 60 * 24 * 1000),
+          },
+        };
+        break;
+      default:
+        break;
+    }
     const options = {
       page,
       limit,
@@ -13,8 +34,8 @@ exports.getReports = (req, res) => {
         locale: 'en',
       },
     };
-    Report.paginate({}, options, (err, data) => {
-      res.status(200).send({ data });
+    Report.paginate(filterByDate, options, (err, data) => {
+      res.status(StatusCodes.OK).send({ data });
     });
   }
 };
@@ -22,7 +43,7 @@ exports.getReports = (req, res) => {
 exports.addReport = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     if (!req.files.length) {
-      res.status(401).send({
+      res.status(StatusCodes.OK).send({
         errors: [
           {
             value: [],
@@ -33,19 +54,32 @@ exports.addReport = (req, res) => {
         ],
       });
     } else {
+      const products = JSON.parse(req.body.products);
       Report.create({
         photos: req.files.map((el) => ({
           photo: el.filename,
         })),
         description: req.body.description,
-        products: JSON.parse(req.body.products),
-        createdAt: Date.now(),
+        products,
         price: req.body.price,
-      }).then((data) => {
-        if (data) {
-          res.status(200).send({ data });
-        }
-      });
+      })
+        .then((data) => {
+          if (data) {
+            res.status(StatusCodes.OK).send({ data });
+          }
+        })
+        .catch((err) => {
+          req.files
+            .map((el) => ({
+              photo: el.path,
+            }))
+            .forEach((element) => {
+              const path = element.photo;
+              fs.unlink(path, () => {
+                res.status(StatusCodes.UNAUTHORIZED).json(err);
+              });
+            });
+        });
     }
   } else {
     req.files

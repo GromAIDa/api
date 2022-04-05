@@ -1,8 +1,8 @@
 const transitionController = require('../controllers/transition');
-const validators = require('../middleware/validators/validators');
+const commonValidators = require('../middleware/validators/common-validators');
 
 module.exports = function (app) {
-  app.get('/transition', validators.limit(), (req, res) => {
+  app.get('/transition', commonValidators.limit(), (req, res) => {
     transitionController.getTransitions(req, res);
   });
 
