@@ -21,7 +21,9 @@ exports.productsUploadByCsv = async (req, res) => {
           photo: row.photo,
           isBought: row.isBought,
         };
-        Product.create(data);
+        if (data.productName) {
+          Product.create(data);
+        }
       })
       .on('end', (rowCount) => {
         fs.unlink(req.file.path, () => {
