@@ -73,7 +73,7 @@ exports.createPaymentIntent = async (req, res) => {
 exports.createTransactionInCurrency = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const event = req.body;
-
+    console.log(event);
     // Handle the event
     switch (event.type) {
       case 'payment_intent.succeeded':
