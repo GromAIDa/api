@@ -2,9 +2,6 @@ const stripe = require('stripe')(
   'sk_test_51KlrwWCKknVOzNZdx75FSZahTmmQD0OSCBAwegdhG0iWy0IJSQVw7nF5jzbDlKfSeNPT80uvmWnO33KskWYVGEz000Hal72Onn'
 );
 
-const endpointSecret =
-  'whsec_c4557dd1d54b635dcb886cd4a6a46f1e22240da9ac6fc8dc86bff41d07989ed7';
-
 const Transaction = require('../schemas/Transaction');
 const errors = require('../middleware/errors/errors');
 const StatusCodes = require('../data/status-codes');
@@ -54,25 +51,38 @@ exports.getTotalInfo = (req, res) => {
 
 exports.createPaymentIntent = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const sig = req.headers['stripe-signature'];
-    console.log(1, sig);
-    console.log('body', req.body);
+    stripe.paymentIntents.create(
+      {
+        amount: req.body.amount,
+        currency: 'usd',
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      },
+      (err, paymentIntent) => {
+        if (err) {
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err.message);
+        } else {
+          res.status(StatusCodes.CREATED).json(paymentIntent);
+        }
+      }
+    );
+  }
+};
 
-    let event;
+exports.createTransactionInCurrency = async (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    const event = req.body;
 
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    } catch (err) {
-      res.status(400).send(`Webhook Error: ${err.message}`);
-      return;
-    }
-    console.log(2, event);
     // Handle the event
     switch (event.type) {
       case 'payment_intent.succeeded':
         const paymentIntent = event.data.object;
-        console.log(3, paymentIntent);
-        // Then define and call a function to handle the event payment_intent.succeeded
+        console.log('PaymentIntent was successful!');
+        break;
+      case 'payment_method.attached':
+        const paymentMethod = event.data.object;
+        console.log('PaymentMethod was attached to a Customer!');
         break;
       // ... handle other event types
       default:
@@ -80,6 +90,6 @@ exports.createPaymentIntent = async (req, res) => {
     }
 
     // Return a 200 response to acknowledge receipt of the event
-    res.send();
+    res.status(StatusCodes.OK).send(event);
   }
 };

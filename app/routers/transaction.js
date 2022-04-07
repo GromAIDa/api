@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser');
 const transactionController = require('../controllers/transaction');
 const commonValidators = require('../middleware/validators/common-validators');
 
@@ -7,15 +6,19 @@ module.exports = function (app) {
     transactionController.getTransactions(req, res);
   });
 
-  app.post(
-    '/webhook',
-    bodyParser.raw({ type: 'application/json' }),
-    (req, res) => {
-      transactionController.createPaymentIntent(req, res);
-    }
-  );
+  app.post('/create-payment-intent', (req, res) => {
+    transactionController.createPaymentIntent(req, res);
+  });
+
+  app.post('/transaction/currency', (req, res) => {
+    transactionController.createTransactionInCurrency(req, res);
+  });
 
   app.get('/total', (req, res) => {
     transactionController.getTotalInfo(req, res);
+  });
+
+  app.post('/webhook', (req, res) => {
+    transactionController.createTransactionInCurrency(req, res);
   });
 };
