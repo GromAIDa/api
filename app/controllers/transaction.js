@@ -73,7 +73,13 @@ exports.createPaymentIntent = async (req, res) => {
 exports.createTransactionInCurrency = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const event = req.body;
-    console.log(event);
+    console.log({
+      id: event.id,
+      object: event.object,
+      amount: event.amount,
+      amount_received: event.amount_received,
+      currency: event.currency,
+    });
     // Handle the event
     // switch (event.type) {
     //   case 'payment_intent.succeeded':
