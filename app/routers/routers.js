@@ -4,7 +4,7 @@ const img = require('./img');
 const product = require('./products');
 
 module.exports = (app, jsonParser, urlencodedParser) => {
-  transaction(app);
+  transaction(app, jsonParser);
   report(app);
   img(app);
   img(app);
