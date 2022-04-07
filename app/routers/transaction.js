@@ -18,7 +18,7 @@ module.exports = function (app) {
     transactionController.getTotalInfo(req, res);
   });
 
-  app.post('/webhook', (req, res) => {
+  app.post('/webhook', app.raw({ type: 'application/json' }), (req, res) => {
     transactionController.createTransactionInCurrency(req, res);
   });
 };
