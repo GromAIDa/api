@@ -56,6 +56,7 @@ exports.createPaymentIntent = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const sig = req.headers['stripe-signature'];
     console.log(1, sig);
+    console.log('body', req.body);
 
     let event;
 
