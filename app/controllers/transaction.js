@@ -73,13 +73,14 @@ exports.createPaymentIntent = async (req, res) => {
 exports.createTransactionInCurrency = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const event = req.body;
-    console.log({
-      id: event.data.object.id,
-      object: event.data.object.object,
-      amount: event.data.object.amount,
-      amount_received: event.data.object.amount_received,
-      currency: event.data.object.currency,
-    });
+    console.log(event);
+    // console.log({
+    //   id: event.data.object.id,
+    //   object: event.data.object.object,
+    //   amount: event.data.object.amount,
+    //   amount_received: event.data.object.amount_received,
+    //   currency: event.data.object.currency,
+    // });
     res.json({ received: true });
   }
 };

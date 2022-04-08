@@ -16,7 +16,7 @@ module.exports = function (app, jsonParser) {
     }
   );
 
-  app.post('/transaction/currency', (req, res) => {
+  app.post('/transaction/currency', jsonParser, (req, res) => {
     transactionController.createTransactionInCurrency(req, res);
   });
 
