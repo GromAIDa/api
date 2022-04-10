@@ -117,7 +117,6 @@ exports.createPaymentLink = async (req, res) => {
       success_url,
       cancel_url,
     });
-    console.log(session.url);
     res.redirect(StatusCodes.SEE_OTHER, session.url);
   }
 };
