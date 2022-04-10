@@ -1,23 +1,27 @@
 const transactionController = require('../controllers/transaction');
 const commonValidators = require('../middleware/validators/common-validators');
-const transitionsValidators = require('../middleware/validators/transactions');
+const validators = require('../middleware/validators/validators');
 
 module.exports = function (app, jsonParser) {
-  app.get('/transaction', commonValidators.limit(), (req, res) => {
-    transactionController.getTransactions(req, res);
+  app.get('/transaction/usdt', commonValidators.limit(), (req, res) => {
+    transactionController.getUsdtTransactions(req, res);
   });
 
   app.post(
-    '/create-payment-intent',
+    '/create-payment-link',
     jsonParser,
-    transitionsValidators.amount(),
+    validators.createPaymentLink,
     (req, res) => {
-      transactionController.createPaymentIntent(req, res);
+      transactionController.createPaymentLink(req, res);
     }
   );
 
   app.post('/transaction/currency', jsonParser, (req, res) => {
-    transactionController.createTransactionInCurrency(req, res);
+    transactionController.createCreditTransaction(req, res);
+  });
+
+  app.get('/transaction/currency', commonValidators.limit(), (req, res) => {
+    transactionController.getCreditTransaction(req, res);
   });
 
   app.get('/total', (req, res) => {

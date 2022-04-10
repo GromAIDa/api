@@ -1,5 +1,5 @@
 const { ethers } = require('ethers');
-const Transaction = require('../schemas/Transaction');
+const Transaction = require('../schemas/USDT-transaction');
 const abi = require('../../abi/erc20abi');
 
 exports.contractEventEmitter = async () => {

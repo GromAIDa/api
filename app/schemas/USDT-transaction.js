@@ -27,4 +27,4 @@ const schema = mongoose.Schema(
 );
 schema.plugin(mongoosePaginate);
 
-module.exports = mongoose.model('Transaction', schema);
+module.exports = mongoose.model('Usdt_transaction', schema);
