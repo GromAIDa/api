@@ -3,6 +3,9 @@ const { body } = require('express-validator');
 exports.amount = () =>
   body('amount')
     .not()
+    .isIn([0])
+    .withMessage('Must be greater than 0')
+    .not()
     .isEmpty()
     .withMessage('Must be filled')
     .isNumeric()
