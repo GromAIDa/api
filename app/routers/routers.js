@@ -1,10 +1,10 @@
-const transition = require('./transition');
+const transaction = require('./transaction');
 const report = require('./report');
 const img = require('./img');
 const product = require('./products');
 
 module.exports = (app, jsonParser, urlencodedParser) => {
-  transition(app);
+  transaction(app, jsonParser);
   report(app);
   img(app);
   img(app);

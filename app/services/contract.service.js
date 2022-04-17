@@ -1,5 +1,5 @@
 const { ethers } = require('ethers');
-const Transition = require('../schemas/Transition');
+const Transaction = require('../schemas/USDT-transaction');
 const abi = require('../../abi/erc20abi');
 
 exports.contractEventEmitter = async () => {
@@ -16,7 +16,7 @@ exports.contractEventEmitter = async () => {
 
   contract.on('Transfer', async (from, to, value, event) => {
     const balance = await contract.balanceOf(abi.address);
-    const transition = {
+    const transaction = {
       balance: ethers.utils.formatEther(balance),
       from,
       to,
@@ -24,11 +24,11 @@ exports.contractEventEmitter = async () => {
       data: event,
       createdAt: Date.now(),
     };
-    Transition.find(
-      { 'data.transactionHash': transition.data.transactionHash },
+    Transaction.find(
+      { 'data.transactionHash': transaction.data.transactionHash },
       (err, docs) => {
         if (!docs.length) {
-          Transition.create(transition);
+          Transaction.create(transaction);
         }
       }
     );
