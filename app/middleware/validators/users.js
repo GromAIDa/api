@@ -21,6 +21,34 @@ exports.email = () =>
 exports.emailForLogin = () =>
   body('email').not().isEmpty().withMessage('Must be filled');
 
+exports.firstName = () =>
+  body('firstName')
+    .not()
+    .isEmpty()
+    .withMessage('Must be filled')
+    .matches('^[a-zA-Z, ,-]+$')
+    .withMessage(
+      'Invalid format. Uppercase, lowercase, space and "-" letters are allowed'
+    );
+
+exports.lastName = () =>
+  body('lastName')
+    .not()
+    .isEmpty()
+    .withMessage('Must be filled')
+    .matches('^[a-zA-Z, ,-]+$')
+    .withMessage(
+      'Invalid format. Uppercase, lowercase, space and "-" letters are allowed'
+    );
+
+exports.phone = () =>
+  body('phone')
+    .not()
+    .isEmpty()
+    .withMessage('Must be filled')
+    .isMobilePhone('any')
+    .withMessage('Phone is invalid');
+
 exports.passwordForLogin = () =>
   body('password')
     .not()

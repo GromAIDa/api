@@ -43,6 +43,13 @@ exports.registerValidators = [
   usersValidators.password(),
 ];
 
+exports.registerIdentityValidators = [
+  usersValidators.firstName(),
+  usersValidators.lastName(),
+  usersValidators.phone(),
+  commonValidators.jwtAuthorization(),
+];
+
 exports.loginValidators = [
   usersValidators.emailForLogin(),
   usersValidators.passwordForLogin(),

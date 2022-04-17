@@ -13,6 +13,15 @@ module.exports = function (app, jsonParser) {
     }
   );
 
+  app.post(
+    '/register-identity',
+    jsonParser,
+    validators.registerIdentityValidators,
+    (req, res) => {
+      usersController.registerIdentity(req, res);
+    }
+  );
+
   app.post('/login', jsonParser, validators.loginValidators, (req, res) => {
     usersController.login(req, res);
   });

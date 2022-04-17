@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable node/no-unsupported-features/es-syntax */
 /* eslint-disable no-underscore-dangle */
 const errors = require('../middleware/errors/errors');
 const User = require('../schemas/User');
@@ -17,6 +19,15 @@ exports.register = (req, res) => {
         email,
       });
       res.status(StatusCodes.CREATED).send({ token });
+    });
+  }
+};
+
+exports.registerIdentity = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    const { _id } = jwtService.jwtDecode(req.headers.authorization).payload;
+    User.updateOne({ _id }, { ...req.body }).then(() => {
+      res.status(StatusCodes.CREATED).send();
     });
   }
 };
