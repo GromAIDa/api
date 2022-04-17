@@ -1,4 +1,5 @@
 const validators = require('../middleware/validators/validators');
+const commonValidators = require('../middleware/validators/common-validators');
 const usersController = require('../controllers/users');
 const transformerUser = require('../middleware/transformer/users');
 
@@ -19,6 +20,14 @@ module.exports = function (app, jsonParser) {
     validators.registerIdentityValidators,
     (req, res) => {
       usersController.registerIdentity(req, res);
+    }
+  );
+
+  app.post(
+    '/email-verification',
+    commonValidators.jwtAuthorization(),
+    (req, res) => {
+      usersController.emailVerification(req, res);
     }
   );
 

@@ -32,6 +32,15 @@ exports.registerIdentity = (req, res) => {
   }
 };
 
+exports.emailVerification = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    const { _id } = jwtService.jwtDecode(req.headers.authorization).payload;
+    User.updateOne({ _id }, { isEmailVerified: true }).then(() => {
+      res.status(StatusCodes.CREATED).send();
+    });
+  }
+};
+
 exports.login = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     User.findOne({ email: req.body.email }).then((data) => {
