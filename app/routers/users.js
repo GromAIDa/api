@@ -23,11 +23,19 @@ module.exports = function (app, jsonParser) {
     }
   );
 
-  app.post(
+  app.put(
     '/email-verification',
     commonValidators.jwtAuthorization(),
     (req, res) => {
       usersController.emailVerification(req, res);
+    }
+  );
+
+  app.post(
+    '/email-verification',
+    commonValidators.jwtAuthorization(),
+    (req, res) => {
+      usersController.sendEmailVerification(req, res);
     }
   );
 
