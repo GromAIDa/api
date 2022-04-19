@@ -67,6 +67,9 @@ exports.password = () =>
     .isLength({ min: 8 })
     .withMessage('Password must be 8 or more characters');
 
+exports.isRemember = () =>
+  body('isRemember').optional().isBoolean().withMessage('Must be boolean');
+
 exports.roles = () =>
   body('roles')
     .not()

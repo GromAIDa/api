@@ -53,4 +53,5 @@ exports.registerIdentityValidators = [
 exports.loginValidators = [
   usersValidators.emailForLogin(),
   usersValidators.passwordForLogin(),
+  usersValidators.isRemember(),
 ];

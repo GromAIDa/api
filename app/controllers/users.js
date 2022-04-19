@@ -13,12 +13,15 @@ exports.register = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     User.create(req.body).then((data) => {
       const { _id, roles, status, email } = data;
-      const token = jwtService.jwtSign({
-        _id,
-        roles,
-        status,
-        email,
-      });
+      const token = jwtService.jwtSign(
+        {
+          _id,
+          roles,
+          status,
+          email,
+        },
+        true
+      );
       res.status(StatusCodes.CREATED).send({ token });
     });
   }
@@ -26,11 +29,13 @@ exports.register = (req, res) => {
 
 exports.registerIdentity = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const { _id } = jwtService.jwtDecode(req.headers.authorization).payload;
+    const { _id } = jwtService.jwtDecode(
+      req.headers.authorization.split(' ')[1]
+    ).payload;
     User.updateOne({ _id }, { ...req.body, status: 'ACTIVE' }).then(
       async () => {
         const { email } = jwtService.jwtDecode(
-          req.headers.authorization
+          req.headers.authorization.split(' ')[1]
         ).payload;
         res.status(StatusCodes.CREATED).send(
           await mailerService.sendEmailVerification(
@@ -46,7 +51,9 @@ exports.registerIdentity = (req, res) => {
 
 exports.emailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const { _id } = jwtService.jwtDecode(req.headers.authorization).payload;
+    const { _id } = jwtService.jwtDecode(
+      req.headers.authorization.split(' ')[1]
+    ).payload;
     User.updateOne({ _id }, { isEmailVerified: true }).then(() => {
       res.status(StatusCodes.CREATED).send();
     });
@@ -55,7 +62,9 @@ exports.emailVerification = (req, res) => {
 
 exports.sendEmailVerification = async (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const { email } = jwtService.jwtDecode(req.headers.authorization).payload;
+    const { email } = jwtService.jwtDecode(
+      req.headers.authorization.split(' ')[1]
+    ).payload;
     mailerService.sendEmailVerification(req.headers.authorization, email);
     res.status(StatusCodes.OK).send(
       await mailerService.sendEmailVerification(
@@ -73,12 +82,15 @@ exports.login = (req, res) => {
       const { _id, roles, status, email } = data;
       if (data) {
         if (cryptoService.bcryptCheckPass(req.body.password, data.password)) {
-          const token = jwtService.jwtSign({
-            _id,
-            roles,
-            status,
-            email,
-          });
+          const token = jwtService.jwtSign(
+            {
+              _id,
+              roles,
+              status,
+              email,
+            },
+            !req.body.isRemember
+          );
           res.status(StatusCodes.OK).send({ token });
         } else {
           res.status(StatusCodes.FORBIDDEN).send(errorsMsg.CredentialsInvalid);

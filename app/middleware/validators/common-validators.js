@@ -13,7 +13,7 @@ exports.authorization = () =>
 
 exports.jwtAuthorization = () =>
   header('Authorization').custom((value) => {
-    if (jwtService.jwtVerify(value)) {
+    if (jwtService.jwtVerify(value.split(' ')[1])) {
       return Promise.resolve('');
     }
     return Promise.reject(errorMsg.Unauthorization);
