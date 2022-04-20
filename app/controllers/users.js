@@ -12,20 +12,27 @@ const mailerService = require('../services/mailer.service');
 exports.register = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     User.findOneAndUpdate(
-      { email: req.body.email },
+      { email: req.body.email, isEmailVerified: true },
       { ...req.body, status: 'ACTIVE' }
     ).then((data) => {
-      const { _id, roles, status, email } = data;
-      const token = jwtService.jwtSign(
-        {
-          _id,
-          roles,
-          status,
-          email,
-        },
-        true
-      );
-      res.status(StatusCodes.CREATED).send({ token });
+      if (data) {
+        const { _id, roles, status, email } = data;
+        const token = jwtService.jwtSign(
+          {
+            _id,
+            roles,
+            status,
+            email,
+          },
+          true
+        );
+        mailerService.sendUserInfo(req.body);
+        res.status(StatusCodes.CREATED).send({ token });
+      } else {
+        User.deleteOne({ email: req.body.email }).then(() => {
+          res.status(StatusCodes.FORBIDDEN).send();
+        });
+      }
     });
   }
 };
