@@ -38,9 +38,9 @@ exports.createPaymentLink = [
 ];
 
 exports.registerValidators = [
-  usersValidators.emailForLogin(),
+  usersValidators.email(),
   usersValidators.roles(),
-  usersValidators.password(),
+  // usersValidators.password(),
 ];
 
 exports.registerIdentityValidators = [
@@ -52,7 +52,7 @@ exports.registerIdentityValidators = [
 ];
 
 exports.loginValidators = [
-  usersValidators.emailForLogin(),
+  usersValidators.email(),
   usersValidators.passwordForLogin(),
   usersValidators.isRemember(),
 ];

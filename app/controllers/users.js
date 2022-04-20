@@ -41,15 +41,33 @@ exports.sendEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const { email } = req.body;
     const verificationCode = Math.floor(Math.random() * (9999 - 1000) + 1000);
-    User.create({ ...req.body, verificationCode }).then(async () => {
-      res.status(StatusCodes.CREATED).send(
-        await mailerService.sendEmailVerification(
-          // link to email for testing, this won`t in the future
-          verificationCode,
-          email
-        )
-      );
-    });
+    User.findOneAndUpdate({ email }, { verificationCode }).then(
+      async (data) => {
+        if (data) {
+          if (data.isEmailVerified) {
+            res.status(StatusCodes.FORBIDDEN).send();
+          } else {
+            res.status(StatusCodes.CREATED).send(
+              await mailerService.sendEmailVerification(
+                // link to email for testing, this won`t in the future
+                verificationCode,
+                email
+              )
+            );
+          }
+        } else {
+          User.create({ email, verificationCode }).then(async () => {
+            res.status(StatusCodes.CREATED).send(
+              await mailerService.sendEmailVerification(
+                // link to email for testing, this won`t in the future
+                verificationCode,
+                email
+              )
+            );
+          });
+        }
+      }
+    );
   }
 };
 

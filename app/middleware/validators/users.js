@@ -4,7 +4,7 @@ const { body } = require('express-validator');
 const Users = require('../../schemas/User');
 const errorMsg = require('../../data/error-message');
 
-exports.email = () =>
+exports.emailExist = () =>
   body('email')
     .not()
     .isEmpty()
@@ -20,7 +20,7 @@ exports.email = () =>
       })
     );
 
-exports.emailForLogin = () =>
+exports.email = () =>
   body('email').not().isEmpty().withMessage('Must be filled').isEmail()
   .withMessage('Email is invalid');
 

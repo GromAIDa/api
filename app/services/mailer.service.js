@@ -51,6 +51,5 @@ exports.sendUserInfo = async (user) => {
             <p>Roles: <strong>${user.roles}</strong></p>
             <p>Info: <strong>${user.info}</strong></p>`,
   });
-  console.log(nodemailer.getTestMessageUrl(info));
   return nodemailer.getTestMessageUrl(info);
 };

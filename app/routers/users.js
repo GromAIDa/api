@@ -2,7 +2,7 @@ const usersValidators = require('../middleware/validators/users');
 const validators = require('../middleware/validators/validators');
 // const commonValidators = require('../middleware/validators/common-validators');
 const usersController = require('../controllers/users');
-const transformerUser = require('../middleware/transformer/users');
+// const transformerUser = require('../middleware/transformer/users');
 
 module.exports = function (app, jsonParser) {
   app.post(
@@ -10,7 +10,7 @@ module.exports = function (app, jsonParser) {
     jsonParser,
     validators.registerValidators,
     validators.registerIdentityValidators, // for the earlier version
-    transformerUser.passwordToHex,
+    // transformerUser.passwordToHex,
     (req, res) => {
       usersController.register(req, res);
     }
@@ -38,7 +38,7 @@ module.exports = function (app, jsonParser) {
     '/email-verification',
     jsonParser,
     usersValidators.verificationCode(),
-    usersValidators.emailForLogin(),
+    usersValidators.email(),
     (req, res) => {
       usersController.confirmEmailVerification(req, res);
     }
