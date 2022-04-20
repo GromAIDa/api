@@ -1,5 +1,6 @@
+const usersValidators = require('../middleware/validators/users');
 const validators = require('../middleware/validators/validators');
-const commonValidators = require('../middleware/validators/common-validators');
+// const commonValidators = require('../middleware/validators/common-validators');
 const usersController = require('../controllers/users');
 const transformerUser = require('../middleware/transformer/users');
 
@@ -8,34 +9,38 @@ module.exports = function (app, jsonParser) {
     '/register',
     jsonParser,
     validators.registerValidators,
+    validators.registerIdentityValidators, // for the earlier version
     transformerUser.passwordToHex,
     (req, res) => {
       usersController.register(req, res);
     }
   );
 
-  app.post(
-    '/register-identity',
-    jsonParser,
-    validators.registerIdentityValidators,
-    (req, res) => {
-      usersController.registerIdentity(req, res);
-    }
-  );
+  // app.post(                             // for the next version
+  //   '/register-identity',
+  //   jsonParser,
+  //   validators.registerIdentityValidators,
+  //   (req, res) => {
+  //     usersController.registerIdentity(req, res);
+  //   }
+  // );
 
   app.put(
     '/email-verification',
-    commonValidators.jwtAuthorization(),
+    jsonParser,
+    usersValidators.email(),
     (req, res) => {
-      usersController.emailVerification(req, res);
+      usersController.sendEmailVerification(req, res);
     }
   );
 
   app.post(
     '/email-verification',
-    commonValidators.jwtAuthorization(),
+    jsonParser,
+    usersValidators.verificationCode(),
+    usersValidators.emailForLogin(),
     (req, res) => {
-      usersController.sendEmailVerification(req, res);
+      usersController.confirmEmailVerification(req, res);
     }
   );
 

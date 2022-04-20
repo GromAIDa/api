@@ -11,7 +11,10 @@ const mailerService = require('../services/mailer.service');
 
 exports.register = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    User.create(req.body).then((data) => {
+    User.findOneAndUpdate(
+      { email: req.body.email },
+      { ...req.body, status: 'ACTIVE' }
+    ).then((data) => {
       const { _id, roles, status, email } = data;
       const token = jwtService.jwtSign(
         {
@@ -27,54 +30,65 @@ exports.register = (req, res) => {
   }
 };
 
-exports.registerIdentity = (req, res) => {
+exports.sendEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const { _id } = jwtService.jwtDecode(
-      req.headers.authorization.split(' ')[1]
-    ).payload;
-    User.updateOne({ _id }, { ...req.body, status: 'ACTIVE' }).then(
-      async () => {
-        const { email } = jwtService.jwtDecode(
-          req.headers.authorization.split(' ')[1]
-        ).payload;
-        res.status(StatusCodes.CREATED).send(
-          await mailerService.sendEmailVerification(
-            // link to email for testing, this won`t in the future
-            req.headers.authorization,
-            email
-          )
-        );
-      }
-    );
-  }
-};
-
-exports.emailVerification = (req, res) => {
-  if (!errors.ContainsError(req, res)) {
-    const { _id } = jwtService.jwtDecode(
-      req.headers.authorization.split(' ')[1]
-    ).payload;
-    User.updateOne({ _id }, { isEmailVerified: true }).then(() => {
-      res.status(StatusCodes.CREATED).send();
+    const { email } = req.body;
+    const verificationCode = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    User.create({ ...req.body, verificationCode }).then(async () => {
+      res.status(StatusCodes.CREATED).send(
+        await mailerService.sendEmailVerification(
+          // link to email for testing, this won`t in the future
+          verificationCode,
+          email
+        )
+      );
     });
   }
 };
 
-exports.sendEmailVerification = async (req, res) => {
+exports.confirmEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    const { email } = jwtService.jwtDecode(
-      req.headers.authorization.split(' ')[1]
-    ).payload;
-    mailerService.sendEmailVerification(req.headers.authorization, email);
-    res.status(StatusCodes.OK).send(
-      await mailerService.sendEmailVerification(
-        // link to email for testing, this won`t in the future
-        req.headers.authorization,
-        email
-      )
-    );
+    User.findOneAndUpdate(
+      {
+        email: req.body.email,
+        isEmailVerified: false,
+      },
+      { isEmailVerified: true }
+    ).then((data) => {
+      if (data) {
+        if (data.verificationCode === req.body.verificationCode) {
+          res.status(StatusCodes.OK).send({ email: data.email });
+        } else {
+          res.status(StatusCodes.BAD_REQUEST).send();
+        }
+      } else {
+        res.status(StatusCodes.FORBIDDEN).send();
+      }
+    });
   }
 };
+
+// exports.registerIdentity = (req, res) => {
+//   if (!errors.ContainsError(req, res)) {
+//     const { _id } = jwtService.jwtDecode(
+//       req.headers.authorization.split(' ')[1]
+//     ).payload;
+//     User.updateOne({ _id }, { ...req.body, status: 'ACTIVE' }).then(
+//       async () => {
+//         const { email } = jwtService.jwtDecode(
+//           req.headers.authorization.split(' ')[1]
+//         ).payload;
+//         res.status(StatusCodes.CREATED).send(
+//           await mailerService.sendEmailVerification(
+//             // link to email for testing, this won`t in the future
+//             req.headers.authorization,
+//             email
+//           )
+//         );
+//       }
+//     );
+//   }
+// };
 
 exports.login = (req, res) => {
   if (!errors.ContainsError(req, res)) {

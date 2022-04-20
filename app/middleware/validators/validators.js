@@ -38,7 +38,7 @@ exports.createPaymentLink = [
 ];
 
 exports.registerValidators = [
-  usersValidators.email(),
+  usersValidators.emailForLogin(),
   usersValidators.roles(),
   usersValidators.password(),
 ];
@@ -47,7 +47,8 @@ exports.registerIdentityValidators = [
   usersValidators.firstName(),
   usersValidators.lastName(),
   usersValidators.phone(),
-  commonValidators.jwtAuthorization(),
+  usersValidators.info(),
+  // commonValidators.jwtAuthorization(), // for the earlier version
 ];
 
 exports.loginValidators = [

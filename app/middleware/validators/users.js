@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable prettier/prettier */
 const { body } = require('express-validator');
 const Users = require('../../schemas/User');
 const errorMsg = require('../../data/error-message');
@@ -19,7 +21,8 @@ exports.email = () =>
     );
 
 exports.emailForLogin = () =>
-  body('email').not().isEmpty().withMessage('Must be filled');
+  body('email').not().isEmpty().withMessage('Must be filled').isEmail()
+  .withMessage('Email is invalid');
 
 exports.firstName = () =>
   body('firstName')
@@ -65,7 +68,15 @@ exports.password = () =>
     .isString()
     .withMessage('Must be string')
     .isLength({ min: 8 })
-    .withMessage('Password must be 8 or more characters');
+    .withMessage('Password must be 8 or more characters')
+    .matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*([0-9]|[^\w\s]))')
+    .withMessage('Password must have one uppercase and numbers');
+
+exports.info = () => body('info').optional();
+
+exports.verificationCode = () => body('verificationCode').not()
+.isEmpty()
+.withMessage('Must be filled').isNumeric().withMessage('Must be number');
 
 exports.isRemember = () =>
   body('isRemember').optional().isBoolean().withMessage('Must be boolean');

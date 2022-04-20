@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema(
   {
     isEmailVerified: { default: false, type: Boolean },
+    verificationCode: Number,
     roles: [String],
     status: { default: 'INIT', type: String },
     registeredVia: String,
@@ -11,6 +12,7 @@ const schema = mongoose.Schema(
     firstName: String,
     lastName: String,
     phone: String,
+    info: String,
   },
   {
     timestamps: true,

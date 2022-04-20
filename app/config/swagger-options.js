@@ -10,6 +10,9 @@ exports.option = {
       {
         url: 'http://localhost:3000',
       },
+      {
+        url: 'https://gromaida.org/api',
+      },
     ],
   },
   apis: ['./app/swagger/*.js'],

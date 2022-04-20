@@ -102,6 +102,9 @@
  *                - email
  *                - roles
  *                - password
+ *                - firstName
+ *                - lastName
+ *                - phone
  *             properties:
  *               email:
  *                type: string
@@ -112,6 +115,18 @@
  *               password:
  *                type: string
  *                description: Password of user
+ *               firstName:
+ *                type: string
+ *                description: First name of user
+ *               lastName:
+ *                type: string
+ *                description: Last name of user
+ *               phone:
+ *                type: string
+ *                description: Phone of user
+ *               info:
+ *                type: string
+ *                description: Description
  *     responses:
  *       201:
  *         description: Create user
@@ -129,13 +144,46 @@
  *          $ref: '#/components/errors_schemas/bad_request'
  */
 
+// /**
+//  * @swagger
+//  * /register-identity:
+//  *   post:
+//  *     tags: [Register/Login]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *                - firstName
+//  *                - lastName
+//  *                - phone
+//  *             properties:
+//  *               firstName:
+//  *                type: string
+//  *                description: First name of user
+//  *               lastName:
+//  *                type: string
+//  *                description: Last name of user
+//  *               phone:
+//  *                type: string
+//  *                description: Phone of user
+//  *     responses:
+//  *       201:
+//  *         description: User has created
+//  *       401:
+//  *         $ref: '#/components/errors_schemas/unauthorized'
+//  *       400:
+//  *         $ref: '#/components/errors_schemas/bad_request'
+//  */
 /**
  * @swagger
- * /register-identity:
- *   post:
+ * /email-verification:
+ *   put:
  *     tags: [Register/Login]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -143,52 +191,45 @@
  *           schema:
  *             type: object
  *             required:
- *                - firstName
- *                - lastName
- *                - phone
+ *                - email
  *             properties:
- *               firstName:
- *                type: string
- *                description: First name of user
- *               lastName:
- *                type: string
- *                description: Last name of user
- *               phone:
- *                type: string
- *                description: Phone of user
+ *               email:
+ *                 type: string
+ *                 description: Email of user
  *     responses:
  *       201:
- *         description: User has created
- *       401:
- *         $ref: '#/components/errors_schemas/unauthorized'
- *       400:
- *         $ref: '#/components/errors_schemas/bad_request'
- */
-/**
- * @swagger
- * /email-verification:
- *   put:
- *     tags: [Register/Login]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       201:
- *         description: Email has verificated
- *       401:
- *         $ref: '#/components/errors_schemas/unauthorized'
+ *         description: Email code has sended
+ *       403:
+ *         $ref: '#/components/errors_schemas/forbidden'
  */
 /**
  * @swagger
  * /email-verification:
  *   post:
  *     tags: [Register/Login]
- *     security:
- *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *                - email
+ *                - verificationCode
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email of user
+ *               verificationCode:
+ *                 type: number
+ *                 description: Verification code
  *     responses:
- *       201:
- *         description: Email has sended
- *       401:
- *         $ref: '#/components/errors_schemas/unauthorized'
+ *       200:
+ *         description: Email has verificated
+ *       400:
+ *         $ref: '#/components/errors_schemas/bad_request'
+ *       403:
+ *         $ref: '#/components/errors_schemas/forbidden'
  */
 
 /**
