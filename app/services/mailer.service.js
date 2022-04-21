@@ -1,20 +1,22 @@
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
-exports.sendEmailVerification = async (code, address) => {
-  const testAccount = await nodemailer.createTestAccount();
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
+const transporter = nodemailer.createTransport(
+  smtpTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user: 'infogromaida@gmail.com',
+      pass: 'NQfRsuWpQT',
     },
-  });
+  })
+);
 
+exports.sendEmailVerification = async (code, address) => {
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <foo@example.com>',
+    from: '"GromAIDa" <infogromaida@gmail.com>',
     to: address,
     subject: 'Hello ✔',
     text: 'Verification code',
@@ -26,21 +28,9 @@ exports.sendEmailVerification = async (code, address) => {
 };
 
 exports.sendUserInfo = async (user) => {
-  const testAccount = await nodemailer.createTestAccount();
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-  });
-
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <foo@example.com>',
-    to: 'foo@example.com',
+    from: '"GromAIDa" <infogromaida@gmail.com>',
+    to: 'infogromaida@gmail.com',
     subject: 'New User ✔',
     text: 'User',
     html: ` <h1>User details</h1>

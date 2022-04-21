@@ -3,6 +3,7 @@
 const { body } = require('express-validator');
 const Users = require('../../schemas/User');
 const errorMsg = require('../../data/error-message');
+const User = require('../../schemas/User');
 
 exports.emailExist = () =>
   body('email')
@@ -21,8 +22,23 @@ exports.emailExist = () =>
     );
 
 exports.email = () =>
-  body('email').not().isEmpty().withMessage('Must be filled').isEmail()
+  body('email').not().isEmpty().withMessage('Email must be filled').isEmail()
   .withMessage('Email is invalid');
+
+exports.putEmailVerification = () =>
+  body('email').not().isEmpty().withMessage('Email must be filled').isEmail()
+  .withMessage('Email is invalid').custom(async(email) => {
+    const verificationCode = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    await User.findOneAndUpdate({ email }, { verificationCode }).then((data) => {
+      if (data) {
+        if (data.isEmailVerified) {
+          return Promise.reject(errorMsg.EmailIsVerified());
+        } 
+          return Promise.resolve('');
+      } 
+        return User.create({ email, verificationCode }).then(() => Promise.resolve(''));
+    });
+  });
 
 exports.firstName = () =>
   body('firstName')
@@ -31,7 +47,7 @@ exports.firstName = () =>
     .withMessage('Must be filled')
     .matches('^[a-zA-Z, ,-]+$')
     .withMessage(
-      'Invalid format. Uppercase, lowercase, space and "-" letters are allowed'
+      'First name is invalid. Uppercase, lowercase, space and "-" letters are allowed'
     );
 
 exports.lastName = () =>
@@ -41,14 +57,14 @@ exports.lastName = () =>
     .withMessage('Must be filled')
     .matches('^[a-zA-Z, ,-]+$')
     .withMessage(
-      'Invalid format. Uppercase, lowercase, space and "-" letters are allowed'
+      'Last name is invalid. Uppercase, lowercase, space and "-" letters are allowed'
     );
 
 exports.phone = () =>
   body('phone')
     .not()
     .isEmpty()
-    .withMessage('Must be filled')
+    .withMessage('Phone must be filled')
     .isMobilePhone('any')
     .withMessage('Phone is invalid');
 
@@ -76,7 +92,7 @@ exports.info = () => body('info').optional();
 
 exports.verificationCode = () => body('verificationCode').not()
 .isEmpty()
-.withMessage('Must be filled').isNumeric().withMessage('Must be number');
+.withMessage('Verification code must be filled').isNumeric().withMessage('Verification code must be number');
 
 exports.isRemember = () =>
   body('isRemember').optional().isBoolean().withMessage('Must be boolean');
@@ -85,6 +101,6 @@ exports.roles = () =>
   body('roles')
     .not()
     .isEmpty()
-    .withMessage('Must be filled')
+    .withMessage('Role must be checked')
     .isIn(['User', 'Volunteer', 'Shop'])
     .withMessage('Role is invalid');

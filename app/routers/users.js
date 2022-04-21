@@ -28,7 +28,7 @@ module.exports = function (app, jsonParser) {
   app.put(
     '/email-verification',
     jsonParser,
-    usersValidators.email(),
+    usersValidators.putEmailVerification(),
     (req, res) => {
       usersController.sendEmailVerification(req, res);
     }
