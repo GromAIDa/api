@@ -1,6 +1,7 @@
 const productValidator = require('./product');
 const reportValidators = require('./report');
 const transactionValidators = require('./transactions');
+const usersValidators = require('./users');
 const commonValidators = require('./common-validators');
 
 exports.productValidatorsPost = [
@@ -34,4 +35,24 @@ exports.createPaymentLink = [
   transactionValidators.cancel_url(),
   transactionValidators.currency(),
   transactionValidators.description(),
+];
+
+exports.registerValidators = [
+  usersValidators.email(),
+  usersValidators.roles(),
+  // usersValidators.password(),
+];
+
+exports.registerIdentityValidators = [
+  usersValidators.firstName(),
+  usersValidators.lastName(),
+  usersValidators.phone(),
+  usersValidators.info(),
+  // commonValidators.jwtAuthorization(), // for the earlier version
+];
+
+exports.loginValidators = [
+  usersValidators.email(),
+  usersValidators.passwordForLogin(),
+  usersValidators.isRemember(),
 ];
