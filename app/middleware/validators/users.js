@@ -48,7 +48,7 @@ exports.subscribeUpdateEmail = () =>
       if (data) {
         return Promise.reject(errorMsg.EmailIsSubscribed());
       } 
-        return Subscribers.create({ email }).then(() => Promise.resolve(''));
+        return Promise.resolve('');
     });
   });
 

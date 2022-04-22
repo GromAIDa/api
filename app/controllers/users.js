@@ -58,7 +58,9 @@ exports.sendEmailVerification = (req, res) => {
 
 exports.subscribeUpdate = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    res.status(StatusCodes.CREATED).send();
+    Subscribers.create({ email }).then(() => {
+      res.status(StatusCodes.CREATED).send();
+    });
   }
 };
 exports.sendEmailVerification = (req, res) => {
