@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
+const Subscribers = require('../schemas/Subscribers');
 
 const transporter = nodemailer.createTransport(
   smtpTransport({
@@ -42,4 +43,19 @@ exports.sendUserInfo = async (user) => {
             <p>Info: <strong>${user.info}</strong></p>`,
   });
   return nodemailer.getTestMessageUrl(info);
+};
+
+exports.sendUpdatesForSubscribers = async (update) => {
+  const returnedData = await Subscribers.find({}).then(async (data) => {
+    const info = await transporter.sendMail({
+      from: '"GromAIDa" <infogromaida@gmail.com>',
+      to: data.map((el) => el.email),
+      subject: 'New Update ✔',
+      text: 'Update',
+      html: ` <h1>See what we have updated.</h1>
+              <p>${update}</p>`,
+    });
+    return nodemailer.getTestMessageUrl(info);
+  });
+  return returnedData;
 };

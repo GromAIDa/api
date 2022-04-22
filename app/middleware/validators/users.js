@@ -2,6 +2,7 @@
 /* eslint-disable prettier/prettier */
 const { body } = require('express-validator');
 const Users = require('../../schemas/User');
+const Subscribers = require('../../schemas/Subscribers');
 const errorMsg = require('../../data/error-message');
 const User = require('../../schemas/User');
 
@@ -37,6 +38,17 @@ exports.putEmailVerification = () =>
           return Promise.resolve('');
       } 
         return User.create({ email, verificationCode }).then(() => Promise.resolve(''));
+    });
+  });
+
+exports.subscribeUpdateEmail = () =>
+  body('email').not().isEmpty().withMessage('Email must be filled').isEmail()
+  .withMessage('Email is invalid').custom(async(email) => {
+    await Subscribers.findOne({ email }).then((data) => {
+      if (data) {
+        return Promise.reject(errorMsg.EmailIsSubscribed());
+      } 
+        return Subscribers.create({ email }).then(() => Promise.resolve(''));
     });
   });
 

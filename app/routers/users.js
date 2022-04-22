@@ -44,6 +44,15 @@ module.exports = function (app, jsonParser) {
     }
   );
 
+  app.post(
+    '/subscribe-update',
+    jsonParser,
+    usersValidators.subscribeUpdateEmail(),
+    (req, res) => {
+      usersController.subscribeUpdate(req, res);
+    }
+  );
+
   app.post('/login', jsonParser, validators.loginValidators, (req, res) => {
     usersController.login(req, res);
   });

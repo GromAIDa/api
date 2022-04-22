@@ -2,6 +2,7 @@ const StatusCodes = require('../data/status-codes');
 const errors = require('../middleware/errors/errors');
 const Product = require('../schemas/Product');
 const productService = require('../services/products.service');
+const mailerService = require('../services/mailer.service');
 
 exports.getProducts = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -42,6 +43,9 @@ exports.postProducts = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     Product.create(req.body).then((data) => {
       if (data) {
+        mailerService.sendUpdatesForSubscribers(
+          'Our team have added new goods of needs'
+        );
         res.status(StatusCodes.OK).send({ data });
       }
     });

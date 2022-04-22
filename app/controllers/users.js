@@ -56,6 +56,21 @@ exports.sendEmailVerification = (req, res) => {
   }
 };
 
+exports.subscribeUpdate = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    res.status(StatusCodes.CREATED).send();
+  }
+};
+exports.sendEmailVerification = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    const { email } = req.body;
+    User.findOne({ email }).then((data) => {
+      mailerService.sendEmailVerification(data.verificationCode, email);
+      res.status(StatusCodes.CREATED).send();
+    });
+  }
+};
+
 exports.confirmEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     User.findOneAndUpdate(

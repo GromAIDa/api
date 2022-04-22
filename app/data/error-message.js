@@ -5,5 +5,6 @@ exports.UserExist = () =>
 exports.Unauthorization = () => 'Unauthorization';
 exports.CredentialsInvalid = () => 'Credentials entered are invalid.';
 exports.EmailIsVerified = () => 'Email already verified';
+exports.EmailIsSubscribed = () => 'Email already subscribed';
 exports.EmailOrCodeInvalid = () => 'Email or code is invalid.';
 exports.EmailIsNotVerifited = () => 'Email is not verified.';
