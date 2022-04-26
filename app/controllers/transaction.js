@@ -59,15 +59,7 @@ exports.getCreditTransaction = (req, res) => {
 };
 
 exports.getTotalInfo = async (req, res) => {
-  totalAmountService.getTotalTransactions
-    .then((total) => {
-      res.status(StatusCodes.OK).send({
-        data: total,
-      });
-    })
-    .catch((err) => {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
-    });
+  totalAmountService.getTotalTransactions(res);
 };
 
 exports.createPaymentLink = async (req, res) => {
