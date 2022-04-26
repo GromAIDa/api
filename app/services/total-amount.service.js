@@ -2,8 +2,9 @@ const UsdtTransaction = require('../schemas/USDT-transaction');
 const CreditTransaction = require('../schemas/Credit-transaction');
 const error = require('../middleware/errors/errors');
 const errorMsg = require('../data/error-message');
+const StatusCodes = require('../data/status-codes');
 
-exports.getTotalTransactions = new Promise((resolve, reject) => {
+exports.getTotalTransactions = (res) => {
   const total = {
     donated: 0,
     donators: 0,
@@ -43,27 +44,33 @@ exports.getTotalTransactions = new Promise((resolve, reject) => {
                 ? total.start
                 : credits[0].createdAt;
           }
-          resolve(total);
+          res.status(StatusCodes.OK).send({
+            data: total,
+          });
         })
         .catch(() => {
-          reject(
-            error.CustomErrors(
-              'total',
-              errorMsg.InternalServerError,
-              'total',
-              'body'
-            )
-          );
+          res
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .send(
+              error.CustomErrors(
+                'total',
+                errorMsg.InternalServerError,
+                'total',
+                'body'
+              )
+            );
         });
     })
     .catch(() => {
-      reject(
-        error.CustomErrors(
-          'total',
-          errorMsg.InternalServerError,
-          'total',
-          'body'
-        )
-      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(
+          error.CustomErrors(
+            'total',
+            errorMsg.InternalServerError,
+            'total',
+            'body'
+          )
+        );
     });
-});
+};
