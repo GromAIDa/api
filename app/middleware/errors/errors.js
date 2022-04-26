@@ -10,10 +10,26 @@ exports.ContainsError = (req, res) => {
       .status(StatusCodes.UNAUTHORIZED)
       .json({ errors: errors.array() });
   }
-  if (errors.errors.find((el) => el.msg === errorMsg.UserExist())) {
+  if (
+    errors.errors.find(
+      (el) =>
+        el.msg === errorMsg.UserExist() || el.msg === errorMsg.EmailIsVerified()
+    )
+  ) {
     return res.status(StatusCodes.FORBIDDEN).json({ errors: errors.array() });
   }
   if (!errors.isEmpty()) {
     return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
   }
 };
+
+exports.CustomErrors = (value, msg, param, location) => ({
+  errors: [
+    {
+      value,
+      msg,
+      param,
+      location,
+    },
+  ],
+});

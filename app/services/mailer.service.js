@@ -1,20 +1,23 @@
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+const Subscribers = require('../schemas/Subscribers');
 
-exports.sendEmailVerification = async (code, address) => {
-  const testAccount = await nodemailer.createTestAccount();
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
+const transporter = nodemailer.createTransport(
+  smtpTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user: process.env.MAIL_ADDRESS,
+      pass: process.env.MAIL_PASS,
     },
-  });
+  })
+);
 
+exports.sendEmailVerification = async (code, address) => {
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <foo@example.com>',
+    from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
     to: address,
     subject: 'Hello ✔',
     text: 'Verification code',
@@ -26,21 +29,9 @@ exports.sendEmailVerification = async (code, address) => {
 };
 
 exports.sendUserInfo = async (user) => {
-  const testAccount = await nodemailer.createTestAccount();
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-  });
-
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <foo@example.com>',
-    to: 'foo@example.com',
+    from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
+    to: process.env.MAIL_ADDRESS,
     subject: 'New User ✔',
     text: 'User',
     html: ` <h1>User details</h1>
@@ -52,4 +43,22 @@ exports.sendUserInfo = async (user) => {
             <p>Info: <strong>${user.info}</strong></p>`,
   });
   return nodemailer.getTestMessageUrl(info);
+};
+
+exports.sendUpdatesForSubscribers = async (update) => {
+  const returnedData = await Subscribers.find({}).then(async (data) => {
+    if (data.filter((el) => el.email).length) {
+      const info = await transporter.sendMail({
+        from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
+        to: data.filter((el) => el.email).map((el) => el.email),
+        subject: 'New Update ✔',
+        text: 'Update',
+        html: ` <h1>See what we have updated.</h1>
+                <p>${update}</p>`,
+      });
+      return nodemailer.getTestMessageUrl(info);
+    }
+    return '';
+  });
+  return returnedData;
 };

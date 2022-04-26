@@ -15,22 +15,24 @@ exports.contractEventEmitter = async () => {
   );
 
   contract.on('Transfer', async (from, to, value, event) => {
-    const balance = await contract.balanceOf(abi.address);
-    const transaction = {
-      balance: ethers.utils.formatEther(balance),
-      from,
-      to,
-      value: ethers.utils.formatEther(value),
-      data: event,
-      createdAt: Date.now(),
-    };
-    Transaction.find(
-      { 'data.transactionHash': transaction.data.transactionHash },
-      (err, docs) => {
-        if (!docs.length) {
-          Transaction.create(transaction);
+    if (from === process.env.ADDRESS || to === process.env.ADDRESS) {
+      const balance = await contract.balanceOf(abi.address);
+      const transaction = {
+        balance: ethers.utils.formatEther(balance),
+        from,
+        to,
+        value: ethers.utils.formatEther(value),
+        data: event,
+        createdAt: Date.now(),
+      };
+      Transaction.find(
+        { 'data.transactionHash': transaction.data.transactionHash },
+        (err, docs) => {
+          if (!docs.length) {
+            Transaction.create(transaction);
+          }
         }
-      }
-    );
+      );
+    }
   });
 };

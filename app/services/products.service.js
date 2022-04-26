@@ -4,6 +4,7 @@ const path = require('path');
 const csv = require('fast-csv');
 const Product = require('../schemas/Product');
 const StatusCodes = require('../data/status-codes');
+const mailerService = require('./mailer.service');
 
 exports.productsUploadByCsv = async (req, res) => {
   let type = '';
@@ -27,6 +28,9 @@ exports.productsUploadByCsv = async (req, res) => {
       })
       .on('end', (rowCount) => {
         fs.unlink(req.file.path, () => {
+          mailerService.sendUpdatesForSubscribers(
+            `Our team have updated the list of needs goods. Have added ${rowCount} goods`
+          );
           res.status(StatusCodes.OK).send(`${rowCount} files has uploaded`);
         });
       });

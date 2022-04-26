@@ -8,6 +8,7 @@ const StatusCodes = require('../data/status-codes');
 const errorsMsg = require('../data/error-message');
 const cryptoService = require('../services/encryption.service');
 const mailerService = require('../services/mailer.service');
+const Subscribers = require('../schemas/Subscribers');
 
 exports.register = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -30,7 +31,16 @@ exports.register = (req, res) => {
         res.status(StatusCodes.CREATED).send({ token });
       } else {
         User.deleteOne({ email: req.body.email }).then(() => {
-          res.status(StatusCodes.FORBIDDEN).send();
+          res
+            .status(StatusCodes.FORBIDDEN)
+            .send(
+              errors.CustomErrors(
+                req.body.email,
+                errorsMsg.EmailIsNotVerifited(),
+                'email',
+                'body'
+              )
+            );
         });
       }
     });
@@ -40,34 +50,28 @@ exports.register = (req, res) => {
 exports.sendEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const { email } = req.body;
-    const verificationCode = Math.floor(Math.random() * (9999 - 1000) + 1000);
-    User.findOneAndUpdate({ email }, { verificationCode }).then(
-      async (data) => {
-        if (data) {
-          if (data.isEmailVerified) {
-            res.status(StatusCodes.FORBIDDEN).send();
-          } else {
-            res.status(StatusCodes.CREATED).send(
-              await mailerService.sendEmailVerification(
-                // link to email for testing, this won`t in the future
-                verificationCode,
-                email
-              )
-            );
-          }
-        } else {
-          User.create({ email, verificationCode }).then(async () => {
-            res.status(StatusCodes.CREATED).send(
-              await mailerService.sendEmailVerification(
-                // link to email for testing, this won`t in the future
-                verificationCode,
-                email
-              )
-            );
-          });
-        }
-      }
-    );
+    User.findOne({ email }).then((data) => {
+      mailerService.sendEmailVerification(data.verificationCode, email);
+      res.status(StatusCodes.CREATED).send();
+    });
+  }
+};
+
+exports.subscribeUpdate = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    Subscribers.create({ email: req.body.email }).then(() => {
+      res.status(StatusCodes.CREATED).send();
+    });
+  }
+};
+
+exports.sendEmailVerification = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    const { email } = req.body;
+    User.findOne({ email }).then((data) => {
+      mailerService.sendEmailVerification(data.verificationCode, email);
+      res.status(StatusCodes.CREATED).send();
+    });
   }
 };
 
@@ -77,17 +81,23 @@ exports.confirmEmailVerification = (req, res) => {
       {
         email: req.body.email,
         isEmailVerified: false,
+        verificationCode: req.body.verificationCode,
       },
       { isEmailVerified: true }
     ).then((data) => {
       if (data) {
-        if (data.verificationCode === req.body.verificationCode) {
-          res.status(StatusCodes.OK).send({ email: data.email });
-        } else {
-          res.status(StatusCodes.BAD_REQUEST).send();
-        }
+        res.status(StatusCodes.OK).send({ email: data.email });
       } else {
-        res.status(StatusCodes.FORBIDDEN).send();
+        res
+          .status(StatusCodes.FORBIDDEN)
+          .send(
+            errors.CustomErrors(
+              req.body.verificationCode,
+              errorsMsg.EmailOrCodeInvalid(),
+              'verificationCode',
+              'body'
+            )
+          );
       }
     });
   }

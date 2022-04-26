@@ -2,6 +2,7 @@ const fs = require('fs');
 const Report = require('../schemas/Report');
 const errors = require('../middleware/errors/errors');
 const StatusCodes = require('../data/status-codes');
+const mailerService = require('../services/mailer.service');
 
 exports.getReports = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -65,6 +66,9 @@ exports.addReport = (req, res) => {
       })
         .then((data) => {
           if (data) {
+            mailerService.sendUpdatesForSubscribers(
+              'Our team have added a new report'
+            );
             res.status(StatusCodes.OK).send({ data });
           }
         })
