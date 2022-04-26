@@ -9,15 +9,15 @@ const transporter = nodemailer.createTransport(
     port: 587,
     secure: false,
     auth: {
-      user: 'infogromaida@gmail.com',
-      pass: 'NQfRsuWpQT',
+      user: process.env.MAIL_ADDRESS,
+      pass: process.env.MAIL_PASS,
     },
   })
 );
 
 exports.sendEmailVerification = async (code, address) => {
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <infogromaida@gmail.com>',
+    from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
     to: address,
     subject: 'Hello ✔',
     text: 'Verification code',
@@ -30,8 +30,8 @@ exports.sendEmailVerification = async (code, address) => {
 
 exports.sendUserInfo = async (user) => {
   const info = await transporter.sendMail({
-    from: '"GromAIDa" <infogromaida@gmail.com>',
-    to: 'infogromaida@gmail.com',
+    from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
+    to: process.env.MAIL_ADDRESS,
     subject: 'New User ✔',
     text: 'User',
     html: ` <h1>User details</h1>
@@ -47,15 +47,18 @@ exports.sendUserInfo = async (user) => {
 
 exports.sendUpdatesForSubscribers = async (update) => {
   const returnedData = await Subscribers.find({}).then(async (data) => {
-    const info = await transporter.sendMail({
-      from: '"GromAIDa" <infogromaida@gmail.com>',
-      to: data.map((el) => el.email),
-      subject: 'New Update ✔',
-      text: 'Update',
-      html: ` <h1>See what we have updated.</h1>
-              <p>${update}</p>`,
-    });
-    return nodemailer.getTestMessageUrl(info);
+    if (data.filter((el) => el.email).length) {
+      const info = await transporter.sendMail({
+        from: `"GromAIDa" <${process.env.MAIL_ADDRESS}>`,
+        to: data.filter((el) => el.email).map((el) => el.email),
+        subject: 'New Update ✔',
+        text: 'Update',
+        html: ` <h1>See what we have updated.</h1>
+                <p>${update}</p>`,
+      });
+      return nodemailer.getTestMessageUrl(info);
+    }
+    return '';
   });
   return returnedData;
 };

@@ -7,6 +7,7 @@ const CreditTransaction = require('../schemas/Credit-transaction');
 const errors = require('../middleware/errors/errors');
 const StatusCodes = require('../data/status-codes');
 const encryptionService = require('../services/encryption.service');
+const totalAmountService = require('../services/total-amount.service');
 
 exports.getUsdtTransactions = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -57,44 +58,16 @@ exports.getCreditTransaction = (req, res) => {
   }
 };
 
-exports.getTotalInfo = (req, res) => {
-  UsdtTransaction.find({ to: process.env.ADDRESS }).then((data) => {
-    const total = {
-      donators: 0,
-      start: data[0].createdAt,
-      donated: 0,
-    };
-    const separateAddresses = [];
-    data.forEach((transaction) => {
-      if (
-        !separateAddresses.includes(transaction.from) &&
-        transaction.from !== process.env.ADDRESS
-      ) {
-        separateAddresses.push(transaction.from);
-      }
-      if (transaction.from !== process.env.ADDRESS) {
-        total.donated += Number(transaction.value);
-      }
-    });
-    total.donators = separateAddresses.length;
-    CreditTransaction.find({}).then((credits) => {
-      const separateEmails = [];
-      credits.forEach((transaction) => {
-        if (!separateEmails.includes(transaction.email)) {
-          separateEmails.push(transaction.email);
-        }
-        total.donated += Number(transaction.amount);
-      });
-      total.donators += separateEmails.length;
-      total.start =
-        new Date(data[0].createdAt) < new Date(credits[0].createdAt)
-          ? data[0].createdAt
-          : credits[0].createdAt;
+exports.getTotalInfo = async (req, res) => {
+  totalAmountService.getTotalTransactions
+    .then((total) => {
       res.status(StatusCodes.OK).send({
         data: total,
       });
+    })
+    .catch((err) => {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     });
-  });
 };
 
 exports.createPaymentLink = async (req, res) => {

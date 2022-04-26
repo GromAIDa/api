@@ -8,3 +8,5 @@ exports.EmailIsVerified = () => 'Email already verified';
 exports.EmailIsSubscribed = () => 'Email already subscribed';
 exports.EmailOrCodeInvalid = () => 'Email or code is invalid.';
 exports.EmailIsNotVerifited = () => 'Email is not verified.';
+exports.InternalServerError = () =>
+  'Server encountered an unexpected condition that prevented it from fulfilling the request';

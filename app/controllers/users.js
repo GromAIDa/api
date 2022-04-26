@@ -8,6 +8,7 @@ const StatusCodes = require('../data/status-codes');
 const errorsMsg = require('../data/error-message');
 const cryptoService = require('../services/encryption.service');
 const mailerService = require('../services/mailer.service');
+const Subscribers = require('../schemas/Subscribers');
 
 exports.register = (req, res) => {
   if (!errors.ContainsError(req, res)) {
@@ -58,11 +59,12 @@ exports.sendEmailVerification = (req, res) => {
 
 exports.subscribeUpdate = (req, res) => {
   if (!errors.ContainsError(req, res)) {
-    Subscribers.create({ email }).then(() => {
+    Subscribers.create({ email: req.body.email }).then(() => {
       res.status(StatusCodes.CREATED).send();
     });
   }
 };
+
 exports.sendEmailVerification = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const { email } = req.body;
