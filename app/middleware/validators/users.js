@@ -57,20 +57,12 @@ exports.firstName = () =>
     .not()
     .isEmpty()
     .withMessage('Must be filled')
-    .matches('^[a-zA-Z, ,-]+$')
-    .withMessage(
-      'First name is invalid. Uppercase, lowercase, space and "-" letters are allowed'
-    );
 
 exports.lastName = () =>
   body('lastName')
     .not()
     .isEmpty()
     .withMessage('Must be filled')
-    .matches('^[a-zA-Z, ,-]+$')
-    .withMessage(
-      'Last name is invalid. Uppercase, lowercase, space and "-" letters are allowed'
-    );
 
 exports.phone = () =>
   body('phone')

@@ -22,5 +22,5 @@ exports.jwtAuthorization = () =>
 exports.limit = () =>
   query('limit')
     .optional()
-    .isIn([5, 10, 20])
+    .isIn([5, 8, 10, 20])
     .withMessage('Must be 5, 10 or 20');

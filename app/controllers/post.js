@@ -1,47 +1,43 @@
 const fs = require('fs');
-const Report = require('../schemas/Report');
+const Post = require('../schemas/Post');
 const errors = require('../middleware/errors/errors');
 const StatusCodes = require('../data/status-codes');
 const mailerService = require('../services/mailer.service');
+const errorsMsg = require('../data/error-message');
 
-exports.getReports = (req, res) => {
+exports.getPosts = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
-    const time = req.query.time || '';
-    let filterByDate = {};
-    switch (time) {
-      case 'week':
-        filterByDate = {
-          createdAt: {
-            $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000),
-          },
-        };
-        break;
-      case 'month':
-        filterByDate = {
-          createdAt: {
-            $gte: new Date(new Date() - 30 * 60 * 60 * 24 * 1000),
-          },
-        };
-        break;
-      default:
-        break;
-    }
     const options = {
       page,
       limit,
       collation: {
         locale: 'en',
       },
+      sort: { createdAt: -1 },
     };
-    Report.paginate(filterByDate, options, (err, data) => {
+    Post.paginate({}, options, (err, data) => {
       res.status(StatusCodes.OK).send({ data });
     });
   }
 };
 
-exports.addReport = (req, res) => {
+exports.postView = (req, res) => {
+  if (!errors.ContainsError(req, res)) {
+    Post.updateOne({ _id: req.query.id }, { $inc: { views: +1 } }).then(
+      (data) => {
+        if (!data.length) {
+          res.status(StatusCodes.CREATED).send({});
+        } else {
+          res.status(StatusCodes.NOT_FOUND).send(errorsMsg.IsNotFound('post'));
+        }
+      }
+    );
+  }
+};
+
+exports.addPost = (req, res) => {
   if (!errors.ContainsError(req, res)) {
     if (!req.files.length) {
       res.status(StatusCodes.OK).send({
@@ -55,19 +51,20 @@ exports.addReport = (req, res) => {
         ],
       });
     } else {
-      const products = JSON.parse(req.body.products);
-      Report.create({
+      Post.create({
         photos: req.files.map((el) => ({
           photo: el.filename,
         })),
         description: req.body.description,
-        products,
-        price: req.body.price,
+        title: req.body.title,
+        timeToRead: Math.round(
+          (req.body.description.length + req.body.title.length) / 200
+        ),
       })
         .then((data) => {
           if (data) {
             mailerService.sendUpdatesForSubscribers(
-              'Our team have added a new report'
+              'Our team have added a new post'
             );
             res.status(StatusCodes.OK).send({ data });
           }

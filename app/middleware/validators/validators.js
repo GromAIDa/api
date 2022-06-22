@@ -2,6 +2,7 @@ const productValidator = require('./product');
 const reportValidators = require('./report');
 const transactionValidators = require('./transactions');
 const usersValidators = require('./users');
+const postValidators = require('./post');
 const commonValidators = require('./common-validators');
 
 exports.productValidatorsPost = [
@@ -27,6 +28,12 @@ exports.reportValidatorsPost = [
   reportValidators.price(),
   reportValidators.count(),
   reportValidators.products(),
+];
+
+exports.postValidatorsPost = [
+  commonValidators.authorization(),
+  postValidators.description(),
+  postValidators.title(),
 ];
 
 exports.createPaymentLink = [
